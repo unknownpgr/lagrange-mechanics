@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Spring pendulum analysis using Lagrange mechanics</h1>
+    <div>Unknownpgr@gmail.com</div>
+    <canvas id="cnv" width="500" height="300"></canvas>
+    <div id="log"></div>
+    <div style="max-width: 800px">
+      Simulation time is not exactly the same as real time due to computational
+      delay. Unlike the theoretical value, the total mechanical energy does not
+      preserved. It is thought to be due to a floating point error. The values
+      used in the simulation are as follows.
+      <br />
+      g = 9.8; system = { m: 20, k: 1.5, l: 20, l': 5, theta: 0.1, theta': 0.8,
+      };
+    </div>
+  </body>
+  <script>
+    // Define contants and system
+    const g = 9.8;
+    let system = {
+      m: 20,
+      k: 1.5,
+      l: 20,
+      l_: 5,
+      theta: 0.1,
+      theta_: 0.8,
+    };
+
+    // Numerical analysis
+    function step(system, dt) {
+      system.l_ +=
+        (g * Math.cos(system.theta) -
+          (system.k * system.l) / system.m +
+          system.l * system.theta_ * system.theta_) *
+        dt;
+      system.theta_ -=
+        ((g * Math.sin(system.theta) + 2 * system.l_ * system.theta_) /
+          system.l) *
+        dt;
+      system.l += system.l_ * dt;
+      system.theta += system.theta_ * dt;
+    }
+
+    // Rendering setting
+    const origin = { x: 250, y: 10 };
+    const ctx = cnv.getContext("2d");
+
+    // Render
+    let dt = 0.001;
+    function animation() {
+      for (let i = 0; i < 10; i++) {
+        // Update system
+        step(system, dt);
+        if (1) {
+          ctx.clearRect(0, 0, 9999, 9999);
+          ctx.beginPath();
+          ctx.moveTo(origin.x, origin.y);
+          let x = origin.x + system.l * Math.sin(system.theta);
+          let y = origin.y + system.l * Math.cos(system.theta);
+          ctx.lineTo(x, y);
+          ctx.arc(x, y, 3, 0, 7);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          let x = origin.x + system.l * Math.sin(system.theta);
+          let y = origin.y + system.l * Math.cos(system.theta);
+          ctx.moveTo(x, y);
+          ctx.arc(x, y, 0.1, 0, 7);
+          ctx.stroke();
+        }
+        let T =
+          (system.m *
+            (system.l_ * system.l_ +
+              system.l * system.l * system.theta_ * system.theta_)) /
+          2;
+        let U =
+          -system.m * g * system.l * Math.cos(system.theta) +
+          (system.l * system.l * system.k) / 2;
+        log.innerHTML = `T=${T}<br>U=${U}<br>Et=${T + U}`;
+      }
+    }
+
+    setInterval(animation, 1);
+  </script>
+</html>
