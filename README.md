@@ -4,13 +4,15 @@ This repository is for my blog post about Lagrange mechanics. For more details, 
 
 I wrote a [MATLAB user-defined function](AutoSolveSystem.m) that solves physical system with Lagrangian mechanics. This function automatically calculates the equation of motion from the kinetic and potential energy of the given system. What you only should do to analyze the motion of system is to describe the system by calculating its kinetic and potential energy. Below are some examples of equations of motion automatically calculated from this script.
 
+> GitHub does not seems to support the LaTeX grammar. Please use [online latex renderer](https://quicklatex.com/) to see readable formula.
+
 ## [Elastic Pendulum](Test1.m)
 
 $$
 \frac{\partial ^2}{\partial t^2} \theta \left(t\right)=-\frac{2\,\frac{\partial }{\partial t} \theta \left(t\right)\,\frac{\partial }{\partial t} r\left(t\right)+g\,\sin\left(\theta \left(t\right)\right)}{l+r\left(t\right)}\\\frac{\partial ^2}{\partial t^2} r\left(t\right)=g\,\cos\left(\theta \left(t\right)\right)+r\left(t\right)\,{\left(\frac{\partial }{\partial t} \theta \left(t\right)\right)}^2+l\,{\left(\frac{\partial }{\partial t} \theta \left(t\right)\right)}^2-\frac{k\,r\left(t\right)}{m}
 $$
 
-I made a physics simulation of this example. Please visit [here](index.html).
+I made a physics simulation of this example. Please visit [here](https://unknownpgr.github.io/lagrangian-mechanics/sim.html).
 
 ## [Double Pendulum](Test2.m)
 
