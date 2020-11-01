@@ -40,6 +40,8 @@
     const origin = { x: 250, y: 10 };
     const ctx = cnv.getContext("2d");
 
+    // Copy system vaiable to window
+    // It is NOT recommended, but...It's my personal project
     Object.keys(system).forEach((varName) => {
       window[varName] = system[varName];
     });
