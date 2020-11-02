@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>2D potential wall analysis using Lagrange mechanics</h1>
+    <div>Unknownpgr@gmail.com</div>
+    <canvas id="cnv" width="500" height="300"></canvas>
+    <div style="max-width: 800px"></div>
+  </body>
+  <script>
+    // Define contants and system
+    let system = {
+      g: 9.634,
+      m: 4,
+      x: 0,
+      x_: 500,
+      y: 100,
+      y_: 0,
+      b: 2,
+      w: 200,
+      dt: 0.0001,
+      skip_frame: 10,
+      mode_track: true,
+    };
+    // For g = 9.8, try below :
+    // dt = 0.00001, skip_frame = 85, 95, 170
+    // dt = 0.00001, skip = 164, 329
+    // dt = 0.0001 , skip = 327
+    // g = 9.634 gives you almost perfact resonance.
+
+    const origin = { x: 250, y: 250 };
+    const ctx = cnv.getContext("2d");
+
+    Object.keys(system).forEach((varName) => {
+      window[varName] = system[varName];
+      console.log(`Map ${varName}(${window[varName]})`);
+    });
+
+    // Numerical analysis
+    function step() {
+      x_ -= (2 * b * Math.sinh(b * x) * Math.exp(-(b * w) / 2) * dt) / m;
+      y_ += (b * Math.exp(-b * y) * dt) / m - g;
+      x += x_ * dt;
+      y += y_ * dt;
+    }
+
+    // Render
+    function animation() {
+      for (let i = 0; i < skip_frame; i++) {
+        // Update system
+        step();
+      }
+      if (!mode_track) {
+        ctx.clearRect(0, 0, 9999, 9999);
+      }
+      ctx.beginPath();
+      let tx = origin.x + x;
+      let ty = origin.y - y;
+      ctx.moveTo(tx, ty);
+      ctx.arc(tx, ty, 0.125, 0, 7);
+      ctx.stroke();
+    }
+
+    setInterval(animation, 1);
+  </script>
+</html>
