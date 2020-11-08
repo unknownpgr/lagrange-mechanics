@@ -38,4 +38,31 @@ $$
 \frac{\partial ^2}{\partial t^2} x\left(t\right)=-\frac{2\,b\,\mathrm{sinh}\left(b\,x\left(t\right)\right)\,{\mathrm{e}}^{-0.5000\,b\,w}}{m}\\
 \frac{\partial ^2}{\partial t^2} y\left(t\right)=\frac{b\,{\mathrm{e}}^{-b\,y\left(t\right)}}{m}-g
 $$
+# Simulation Results
 
+Below are some simulation results of elastic pendulum(`sim.html`). By adjusting the simulation parameters, you can get some beautiful image like this.
+
+![download (8)](download (8)-1604843145992.png)
+
+```
+Parameters : 
+g=9.82
+m=10
+k=2.0912
+l=800
+r_=10
+r=200
+theta=1
+theta_=0
+dt=0.0001
+skip_frame=307
+mode_track=0
+```
+
+
+
+![download (3)](download (3)-1604843145994.png)
+
+```
+I forgot the parameters of this simulation.
+```

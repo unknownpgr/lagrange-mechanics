@@ -1,86 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>Elastic pendulum analysis using Lagrange mechanics</h1>
-    <div>Unknownpgr@gmail.com</div>
-    <canvas id="cnv" width="500" height="300"></canvas>
-    <div id="log"></div>
-    <div style="max-width: 800px">
-      Simulation time is not exactly the same as real time due to computational
-      delay. You can see that the total mechanical energy does not preserved. It
-      is because of the floating point error. The values used in the simulation
-      are as follows. You can also modify the values below and run simulation
-      with your custom system.
-    </div>
-    <textarea name="" id="ta" rows="10"> </textarea>
-    <button onclick="updateSystem()">Apply Change</button>
-  </body>
-  <script>
-    // Define contants and system
-    let system = {
-      g: 9.81,
-      m: 10,
-      k: 5,
-      l: 150,
-      r_: 0,
-      r: 50,
-      theta: 1,
-      theta_: 0,
-      dt: 0.005,
-      skip_frame: 10,
-      mode_track: 0,
-    };
 
-    // Rendering setting
-    const origin = { x: 250, y: 10 };
-    const ctx = cnv.getContext("2d");
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
 
-    // Copy system vaiable to window
-    // It is NOT recommended, but...It's my personal project
-    Object.keys(system).forEach((varName) => {
-      window[varName] = system[varName];
+<body>
+  <h1>Elastic pendulum analysis using Lagrange mechanics</h1>
+  <div>Unknownpgr@gmail.com</div>
+  <canvas id="cnv" width="4096" height="1280"></canvas>
+  <div id="log"></div>
+  <div style="max-width: 800px">
+    Simulation time is not exactly the same as real time due to computational
+    delay. You can see that the total mechanical energy does not preserved. It
+    is because of the floating point error. The values used in the simulation
+    are as follows. You can also modify the values below and run simulation
+    with your custom system.
+  </div>
+  <textarea name="" id="ta" rows="10"> </textarea>
+  <button onclick="updateSystem()">Apply Change</button>
+</body>
+<script>
+  // Define contants and system
+  let system = {
+    g: 9.81,
+    m: 10,
+    k: 5,
+    l: 300,
+    r_: 0,
+    r: 100,
+    theta: 1,
+    theta_: 0,
+    dt: 0.005,
+    skip_frame: 100,
+    mode_track: 0,
+  };
+
+  // Rendering setting
+  const origin = { x: 1280, y: 10 };
+  const ctx = cnv.getContext("2d");
+
+  // Copy system vaiable to window
+  // It is NOT recommended, but...It's my personal project
+  Object.keys(system).forEach((varName) => {
+    window[varName] = system[varName];
+  });
+
+  function updateSystem() {
+    ta.value.split("\n").forEach((line) => {
+      let parts = line.trim().split("=");
+      if (parts.length == 1) return;
+      let varName = parts[0].trim();
+      let varValue = +parts[1].trim();
+      if (varName.length == 0) return;
+      if (isNaN(varValue)) return;
+      console.log(varName + "=" + varValue);
+      window[varName] = varValue;
     });
+    let taStr = "";
+    Object.keys(system).forEach((varName) => {
+      taStr += varName + "=" + window[varName] + "\n";
+    });
+    ta.value = taStr;
+    ctx.clearRect(0, 0, 9999, 9999);
+  }
+  updateSystem();
 
-    function updateSystem() {
-      ta.value.split("\n").forEach((line) => {
-        let parts = line.trim().split("=");
-        if (parts.length == 1) return;
-        let varName = parts[0].trim();
-        let varValue = +parts[1].trim();
-        if (varName.length == 0) return;
-        if (isNaN(varValue)) return;
-        console.log(varName + "=" + varValue);
-        window[varName] = varValue;
-      });
-      let taStr = "";
-      Object.keys(system).forEach((varName) => {
-        taStr += varName + "=" + window[varName] + "\n";
-      });
-      ta.value = taStr;
-      ctx.clearRect(0, 0, 9999, 9999);
-    }
-    updateSystem();
+  function sq(x) {
+    return x * x;
+  }
 
-    function sq(x) {
-      return x * x;
-    }
+  // Numerical analysis
+  function step() {
+    r_ += (g * Math.cos(theta) - (k * r) / m + (l + r) * sq(theta_)) * dt;
+    theta_ -= ((g * Math.sin(theta) + 2 * r_ * theta_) / (l + r)) * dt;
+    r += r_ * dt;
+    theta += theta_ * dt;
+  }
 
-    // Numerical analysis
-    function step() {
-      r_ += (g * Math.cos(theta) - (k * r) / m + (l + r) * sq(theta_)) * dt;
-      theta_ -= ((g * Math.sin(theta) + 2 * r_ * theta_) / (l + r)) * dt;
-      r += r_ * dt;
-      theta += theta_ * dt;
-    }
-
-    // Render
-    let counter = 0;
-    function animation() {
+  // Render
+  let counter = 0;
+  function animation() {
+    for (let tt = 0; tt < 10; tt++) {
       for (let i = 0; i < skip_frame; i++) {
         // Update system
         step();
@@ -100,14 +103,16 @@
         let x = origin.x + (l + r) * Math.sin(theta);
         let y = origin.y + (l + r) * Math.cos(theta);
         ctx.moveTo(x, y);
-        ctx.arc(x, y, 0.1, 0, 7);
+        ctx.arc(x, y, .1, 0, 7);
         ctx.stroke();
       }
       let T = (m * (sq(r_) + sq((l + r) * theta_))) / 2;
       let U = -m * g * (l + r) * Math.cos(theta) + (sq(r) * k) / 2;
       log.innerHTML = `T=${T}<br>U=${U}<br>Et=${T + U}<br>Step=${counter}`;
     }
+  }
 
-    setInterval(animation, 1);
-  </script>
+  setInterval(animation, 1);
+</script>
+
 </html>
