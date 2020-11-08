@@ -10,7 +10,7 @@
 <body>
   <h1>Elastic pendulum analysis using Lagrange mechanics</h1>
   <div>Unknownpgr@gmail.com</div>
-  <canvas id="cnv" width="4096" height="1280"></canvas>
+  <canvas id="cnv" width="500" height="300"></canvas>
   <div id="log"></div>
   <div style="max-width: 800px">
     Simulation time is not exactly the same as real time due to computational
@@ -28,18 +28,18 @@
     g: 9.81,
     m: 10,
     k: 5,
-    l: 300,
+    l: 150,
     r_: 0,
-    r: 100,
+    r: 50,
     theta: 1,
     theta_: 0,
     dt: 0.005,
-    skip_frame: 100,
+    skip_frame: 10,
     mode_track: 0,
   };
 
   // Rendering setting
-  const origin = { x: 1280, y: 10 };
+  const origin = { x: 250, y: 10 };
   const ctx = cnv.getContext("2d");
 
   // Copy system vaiable to window
@@ -83,33 +83,31 @@
   // Render
   let counter = 0;
   function animation() {
-    for (let tt = 0; tt < 10; tt++) {
-      for (let i = 0; i < skip_frame; i++) {
-        // Update system
-        step();
-        counter++;
-      }
-      if (mode_track) {
-        ctx.clearRect(0, 0, 9999, 9999);
-        ctx.beginPath();
-        ctx.moveTo(origin.x, origin.y);
-        let x = origin.x + (l + r) * Math.sin(theta);
-        let y = origin.y + (l + r) * Math.cos(theta);
-        ctx.lineTo(x, y);
-        ctx.arc(x, y, 3, 0, 7);
-        ctx.stroke();
-      } else {
-        ctx.beginPath();
-        let x = origin.x + (l + r) * Math.sin(theta);
-        let y = origin.y + (l + r) * Math.cos(theta);
-        ctx.moveTo(x, y);
-        ctx.arc(x, y, .1, 0, 7);
-        ctx.stroke();
-      }
-      let T = (m * (sq(r_) + sq((l + r) * theta_))) / 2;
-      let U = -m * g * (l + r) * Math.cos(theta) + (sq(r) * k) / 2;
-      log.innerHTML = `T=${T}<br>U=${U}<br>Et=${T + U}<br>Step=${counter}`;
+    for (let i = 0; i < skip_frame; i++) {
+      // Update system
+      step();
+      counter++;
     }
+    if (mode_track) {
+      ctx.clearRect(0, 0, 9999, 9999);
+      ctx.beginPath();
+      ctx.moveTo(origin.x, origin.y);
+      let x = origin.x + (l + r) * Math.sin(theta);
+      let y = origin.y + (l + r) * Math.cos(theta);
+      ctx.lineTo(x, y);
+      ctx.arc(x, y, 3, 0, 7);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      let x = origin.x + (l + r) * Math.sin(theta);
+      let y = origin.y + (l + r) * Math.cos(theta);
+      ctx.moveTo(x, y);
+      ctx.arc(x, y, 0.1, 0, 7);
+      ctx.stroke();
+    }
+    let T = (m * (sq(r_) + sq((l + r) * theta_))) / 2;
+    let U = -m * g * (l + r) * Math.cos(theta) + (sq(r) * k) / 2;
+    log.innerHTML = `T=${T}<br>U=${U}<br>Et=${T + U}<br>Step=${counter}`;
   }
 
   setInterval(animation, 1);
