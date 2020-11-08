@@ -42,7 +42,7 @@ $$
 
 Below are some simulation results of elastic pendulum(`sim.html`). By adjusting the simulation parameters, you can get some beautiful image like this.
 
-![download (8)](download (8)-1604843145992.png)
+![](result3.png)
 
 ```
 Parameters : 
@@ -61,7 +61,7 @@ mode_track=0
 
 
 
-![download (3)](download (3)-1604843145994.png)
+![](result1.png)
 
 ```
 I forgot the parameters of this simulation.
